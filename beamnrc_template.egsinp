@@ -1,0 +1,119 @@
+V21EX --- 6MVp Photon Beam                                                       #!GUI1.0
+AIR700ICRU
+0, 0, 0, 0, 0, 3, 0,  IWATCH ETC.
+5000, 33, 98, 999, 2, 1000, 0, 0,  NCASE ETC.
+20, 100, 4, 21, 1, 12.5984,  DIRECTIONAL BREM OPTIONS
+-1, 19, -0.15, 0, 0, 1, 1.2, -0, 0.0, 0.0,  IQIN, ISOURCE + OPTIONS
+0, MONOENERGETIC
+6.4
+0, 0, 0.7, 0.01, 0, -1, 2.0,  0 , ECUT,PCUT,IREJCT,ESAVE
+0, 1, 1, 8, 8,  PHOTON FORCING
+1, 9,  SCORING INPUT
+1, 1
+25, 
+0,  DOSE COMPONENTS
+-0.0889, Z TO FRONT FACE
+*********** start of CM SLABS with identifier TARGET  ***********
+#
+# The CM parameters for Target goes here.
+#
+*********** start of CM CONS3R with identifier PRIMCOLL  ***********
+#
+# The CM parameters for Primary Collimator goes here.
+#
+*********** start of CM SLABS with identifier VACWIND  ***********
+#
+# The CM parameters for Vacuum Window goes here.
+#
+*********** start of CM FLATFILT with identifier FLATFILT  ***********
+#
+# The CM parameters for Flattening Filter goes here.
+#
+*********** start of CM CHAMBER with identifier CHAMBER  ***********
+#
+# The CM parameters for Monitering Chamber goes here.
+#
+*********** start of CM MIRROR with identifier MIRROR  ***********
+#
+# The CM parameters for Mirror goes here.
+#
+*********** start of CM SYNCJAWS with identifier JAWS  ***********
+15, 0, 0, 0, 0, 0
+XYJAWS
+2, 1, # PAIRED BARS OR SYNCJAWS
+Y
+28.0, 35.8, ## 1.4, 1.79, -1.4, -1.79, 
+X
+36.7, 44.5, ## 1.835, 2.225, -1.835, -2.225, 
+SYNCJAWS_FILE
+0.7, 0.01, 0, 0, 
+0.7, 0.01, 11, 11, 
+W18_700
+0.7, 0.01, 12, 12, 
+W18_700
+*********** start of CM SYNCVMLC with identifier MLC  ***********
+20.5, RMAX
+CL21X - Millenium MLC 
+1, 3, 1, ORIENT, NGROUP, MODE
+48.25, ZMIN
+6.657, ZTHICK
+0.4705, 0.04, 0.04, 0.1354, 0.3252, 0.1227, 48.25, 48.533, 51.524, 51.732, 52.98, 53.28, 1.7, 54.5474, 54.812, 
+0.2325, 0.04, 0.04, 0.0929, 0.1371, 0.1371, 48.345, 48.6096, 49.5277, 49.8277, 1.7, 51.625, 51.627, 54.627, 54.746, 
+0.2338, 0.04, 0.04, 0.0354, 0.1235, 0.1185, 48.412, 48.531, 51.631, 51.732, 53.3293, 53.6293, 1.7, 54.5474, 54.812, 
+10, 1
+40, 2
+10, 1
+-9.57615, START
+0.0057, LEAFGAP
+0, ENDTYPE
+8, ZFOCUS or RADIUS of leaf ends
+0, ZFOCUS of leaf sides
+SYNCVMLC_FILE
+0.7, 0.01, 0, 0, 
+AIR700ICRU
+0.7, 0.01, 15, 15, 0, 
+W700ICRU
+0.7, 0.01, 15, 15, 
+AIR700ICRU
+*********** start of CM SLABS with identifier AIR ***********
+32, RMAX
+Air outside Linac head
+1, NSLABS
+54.907, ZMIN
+0.093, 0.7, 0.01, 0, 0, 0
+AIR700ICRU
+*********************end of all CMs*****************************
+ #########################
+ :Start MC Transport Parameter:
+ 
+ Global ECUT= 0.7
+ Global PCUT= 0.01
+ Global SMAX= 1e10
+ ESTEPE= 0.25
+ XIMAX= 0.5
+ Boundary crossing algorithm= EXACT
+ Skin depth for BCA= 3
+ Electron-step algorithm= PRESTA-II
+ Spin effects= On
+ Brems angular sampling= Simple
+ Brems cross sections= BH
+ Bound Compton scattering= Off
+ Compton cross sections= default
+ Pair angular sampling= Simple
+ Pair cross sections= BH
+ Photoelectron angular sampling= Off
+ Rayleigh scattering= Off
+ Atomic relaxations= Off
+ Electron impact ionization= Off
+ Photon cross sections= si
+ Photon cross-sections output= Off
+ 
+ :Stop MC Transport Parameter:
+ #########################
+ :Start DBS rejection plane:
+ 
+ Use a rejection plane= On
+ Z(cm) from zero reference plane= 54.95
+ 
+ :Stop DBS rejection plane:
+ #########################
