@@ -69,7 +69,7 @@ def dcm2dosxyz(AngleGantry, AngleCouch, AngleCollimator, Method='Zhan'):
             phicol = np.abs(phicol)
                     
     else:
-        raise ValueError, 'Incorrect c.s. transformation method!'
+        raise ValueError('Incorrect c.s. transformation method!')
     
     ###########################################################
     # Range: theta - (0,180), phi - (0,360), phicol - (0,360) #
