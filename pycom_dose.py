@@ -70,7 +70,7 @@ import argparse
 import struct
 import io as sio
 import numpy as np
-import dicom
+import pydicom
 from pycomuid import get_dicomuid
 
 parser = argparse.ArgumentParser(description='Create DICOM RD from MC 3ddose file')
@@ -139,7 +139,7 @@ print('MC Chamber Dose:    ', d_ch)
 print('Calibration Factor: ', D_ch_MU)
 print()
 ###### Info from DICOM RP file
-dcmplan = dicom.read_file(dcmplanfile)
+dcmplan = pydicom.read_file(dcmplanfile)
 RefBeam = {}
 MUtot = 0
 #DoseTot = 0
@@ -156,7 +156,7 @@ print('nFrac = ', nFrac)
 print()
 
 # Info from the model DICOM RT Dose file
-dcmdose = dicom.read_file(dcmdosefile)
+dcmdose = pydicom.read_file(dcmdosefile)
 xsizeold = dcmdose.Columns
 ysizeold = dcmdose.Rows
 zsizeold = dcmdose.NumberofFrames
@@ -260,7 +260,7 @@ dcmdose.SrUID = get_dicomuid()
 dcmdose.StudyInstanceUID = get_dicomuid()
 dcmdose.SeriesInstanceUID = get_dicomuid()
         
-dicom.write_file(outfile, dcmdose)
+pydicom.write_file(outfile, dcmdose)
 print('New DCM RD file created: ',outfile)
 
 #print xsize, ysize, zsize, length, length*dcmdose.BitsAllocated/8, max(di)

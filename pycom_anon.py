@@ -27,7 +27,7 @@
 
 import os
 import argparse
-import dicom
+import pydicom
 from pycomuid import get_dicomuid
 
 parser = argparse.ArgumentParser(description='Anonymizing DICOM files')
@@ -52,7 +52,7 @@ FOR_uid = get_dicomuid()
 
 for dcmfile in dcm_list:    
     dcmfilename = dcmfile.strip()
-    dcm = dicom.read_file(dcmfilename)
+    dcm = pydicom.read_file(dcmfilename)
 
     dcm.FrameOfReferenceUID = FOR_uid        
     dcm.PatientsName = anon_name
@@ -68,5 +68,5 @@ for dcmfile in dcm_list:
     dcm.SeriesInstanceUID = get_dicomuid()
     
     outfile = 'anon_'+dcmfilename
-    dicom.write_file(outfile, dcm)
+    pydicom.write_file(outfile, dcm)
 

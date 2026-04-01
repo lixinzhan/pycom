@@ -70,7 +70,7 @@
 import os
 import argparse
 import numpy as np
-import dicom
+import pydicom
 from dicom2dosxyz import dcm2dosxyz
 
 parser=argparse.ArgumentParser(description='Create MC Input from DICOM Plan')
@@ -89,7 +89,7 @@ else:
     dosxyzdir = os.getenv('EGS_HOME') + '/dosxyznrc'
 
 dcmplanfile = args.dcmplan
-dcmplan = dicom.read_file(dcmplanfile)
+dcmplan = pydicom.read_file(dcmplanfile)
 
 patientname = dcmplan.PatientsName
 patientid = dcmplan.PatientID
