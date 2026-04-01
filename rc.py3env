@@ -1,0 +1,3 @@
+source venv3/bin/activate
+export PWD=`pwd`
+export PYTHONPATH=$PWD

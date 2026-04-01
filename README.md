@@ -48,3 +48,17 @@ cd pycom
 source rc.py2env
 pip2 install -r requirements.txt
 ```
+
+---
+
+Here are the steps to set up a Python3 environment.
+
+```
+sudo apt install python3
+sudo apt install python3-venv
+pytho3 -m venv pycom/venv3
+cd pycom
+source rc.py3env
+pip install --upgrade pip
+pip install -r requirements.txt
+```
