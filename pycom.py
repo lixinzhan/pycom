@@ -133,8 +133,8 @@ for rbeam in dcmplan.FractionGroups[0].ReferencedBeams:
     if hasattr(rbeam,'BeamMeterset'):
         RefBeam[rbeam.ReferencedBeamNumber] = rbeam.BeamMeterset
         MUtot = MUtot + rbeam.BeamMeterset
-print 'MU for each beam: ', RefBeam
-print 'Total MU: ', MUtot
+print('MU for each beam: ', RefBeam)
+print('Total MU: ', MUtot)
 
 isIMRT = True
 isARC = True
@@ -147,8 +147,8 @@ for beam in dcmplan.Beams:
     cp = beam.ControlPoints[0]
     NominalEnergy = cp.NominalBeamEnergy
     ncp = beam.NumberofControlPoints
-    print '# of CP:', ncp, 'for beam #', beam.BeamNumber, '(', beam.BeamName,')', \
-        ' with MU ', RefBeam[beam.BeamNumber], 'and MU Weight', RefBeam[beam.BeamNumber]/MUtot
+    print('# of CP:', ncp, 'for beam #', beam.BeamNumber, '(', beam.BeamName,')', \
+        ' with MU ', RefBeam[beam.BeamNumber], 'and MU Weight', RefBeam[beam.BeamNumber]/MUtot)
     ncptot = ncptot + ncp
     if NominalEnergy-6.0 >= 1.0e-3:
         isALL6MV = False
@@ -162,30 +162,30 @@ for beam in dcmplan.Beams:
         isIMRT = False
         isARC  = False
 
-print 'Total CP:', ncptot
-print    
-print 'isIMRT = ', isIMRT, 'isARC = ', isARC, 'isALL6MV = ', isALL6MV
+print('Total CP:', ncptot)
+print()    
+print('isIMRT = ', isIMRT, 'isARC = ', isARC, 'isALL6MV = ', isALL6MV)
 
-print >>djaw, 'SYNCJAW File for patient', patientid
-print >>djaw, '%d' % (len(RefBeam)*2) # number of beams
-print >>djaw, '2'                     # paired bars
+print('SYNCJAW File for patient', patientid, file=djaw)
+print('%d' % (len(RefBeam)*2), file=djaw) # number of beams
+print('2', file=djaw)                     # paired bars
 
 # first two lines for dynvmlc input file.
 if isIMRT:
-    print >>cpmlc, 'IMRT MLC Control Points'
+    print('IMRT MLC Control Points', file=cpmlc)
 elif isARC:
-    print >>cpmlc, 'RapidArc MLC Control Points'
-print >>cpmlc, ncptot
+    print('RapidArc MLC Control Points', file=cpmlc)
+print(ncptot, file=cpmlc)
 
 # the head part for pdMLC file
-print >>pdmlc, 'File Rev = G'
-print >>pdmlc, 'Treatment = Dynamic Dose'
-print >>pdmlc, 'Last Name = tst'
-print >>pdmlc, 'First Name = tst'
-print >>pdmlc, 'Patient ID =', patientid
-print >>pdmlc, 'Number of Fields =', beam.NumberofControlPoints
-print >>pdmlc, 'Number of Leaves = 120'
-print >>pdmlc, 'Tolerance = 0.100000'
+print('File Rev = G', file=pdmlc)
+print('Treatment = Dynamic Dose', file=pdmlc)
+print('Last Name = tst', file=pdmlc)
+print('First Name = tst', file=pdmlc)
+print('Patient ID =', patientid, file=pdmlc)
+print('Number of Fields =', beam.NumberofControlPoints, file=pdmlc)
+print('Number of Leaves = 120', file=pdmlc)
+print('Tolerance = 0.100000', file=pdmlc)
 
 JawOpenMax = 0.0
 PreBeamWeight = 0.0
@@ -213,20 +213,20 @@ for beam in dcmplan.Beams:
         elif device.RTBeamLimitingDeviceType in ['Y','ASYMY']: # or 'Y' for symm fld
             yjawmax = -device.LeafJawPositions[0]/10.0
             yjawmin = -device.LeafJawPositions[1]/10.0
-    print >>djaw, mu_index1
-    print >>djaw,'Y'
-    print >>djaw,'%.4f, %.4f, %.4f, %.4f,' % \
-            (yjawmax*0.28, yjawmax*0.358,yjawmin*0.28,yjawmin*0.358)
-    print >>djaw,'X'
-    print >>djaw,'%.4f, %.4f, %.4f, %.4f,' % \
-            (xjawmax*0.367,xjawmax*0.445,xjawmin*0.367,xjawmin*0.445)
-    print >>djaw, mu_index2
-    print >>djaw,'Y'
-    print >>djaw,'%.4f, %.4f, %.4f, %.4f,' % \
-            (yjawmax*0.28, yjawmax*0.358,yjawmin*0.28,yjawmin*0.358)
-    print >>djaw,'X'
-    print >>djaw,'%.4f, %.4f, %.4f, %.4f,' % \
-            (xjawmax*0.367,xjawmax*0.445,xjawmin*0.367,xjawmin*0.445)
+    print(mu_index1, file=djaw)
+    print('Y', file=djaw)
+    print('%.4f, %.4f, %.4f, %.4f,' % \
+            (yjawmax*0.28, yjawmax*0.358,yjawmin*0.28,yjawmin*0.358), file=djaw)
+    print('X', file=djaw)
+    print('%.4f, %.4f, %.4f, %.4f,' % \
+            (xjawmax*0.367,xjawmax*0.445,xjawmin*0.367,xjawmin*0.445), file=djaw)
+    print(mu_index2, file=djaw)
+    print('Y', file=djaw)
+    print('%.4f, %.4f, %.4f, %.4f,' % \
+            (yjawmax*0.28, yjawmax*0.358,yjawmin*0.28,yjawmin*0.358), file=djaw)
+    print('X', file=djaw)
+    print('%.4f, %.4f, %.4f, %.4f,' % \
+            (xjawmax*0.367,xjawmax*0.445,xjawmin*0.367,xjawmin*0.445), file=djaw)
     JawOpenMax = max(JawOpenMax,-xjawmin,xjawmax,-yjawmin,yjawmax)        
     
     # gamma: gantry angle, rho: couch angle, col: colimator angle
@@ -236,25 +236,25 @@ for beam in dcmplan.Beams:
     if isIMRT:
         gamma = cp.GantryAngle
         out=dcm2dosxyz(gamma, rho, col, 'Zhan') # coord. transform
-        print >>cpgantry, '%.6f, %.6f, %.6f, %.2f, %.2f, %.2f, %.6f, %.6f' % \
-            (iso[0]/10.0, iso[1]/10.0, iso[2]/10.0, out[0], out[1], out[2], dsource, mu_index1)
+        print('%.6f, %.6f, %.6f, %.2f, %.2f, %.2f, %.6f, %.6f' % \
+            (iso[0]/10.0, iso[1]/10.0, iso[2]/10.0, out[0], out[1], out[2], dsource, mu_index1), file=cpgantry)
         ncpgantry = ncpgantry + 1
-        print >>dcmgantry,'%.6f, %.6f, %.6f, %.2f, %.2f, %.2f, %.6f, %.6f' % \
-            (iso[0]/10.0, iso[1]/10.0, iso[2]/10.0, gamma, rho, col, dsource, mu_index1)
-        print >>cpgantry, '%.6f, %.6f, %.6f, %.2f, %.2f, %.2f, %.6f, %.6f' % \
-            (iso[0]/10.0, iso[1]/10.0, iso[2]/10.0, out[0], out[1], out[2], dsource, mu_index2)
+        print('%.6f, %.6f, %.6f, %.2f, %.2f, %.2f, %.6f, %.6f' % \
+            (iso[0]/10.0, iso[1]/10.0, iso[2]/10.0, gamma, rho, col, dsource, mu_index1), file=dcmgantry)
+        print('%.6f, %.6f, %.6f, %.2f, %.2f, %.2f, %.6f, %.6f' % \
+            (iso[0]/10.0, iso[1]/10.0, iso[2]/10.0, out[0], out[1], out[2], dsource, mu_index2), file=cpgantry)
         ncpgantry = ncpgantry + 1
-        print >>dcmgantry,'%.6f, %.6f, %.6f, %.2f, %.2f, %.2f, %.6f, %.6f' % \
-            (iso[0]/10.0, iso[1]/10.0, iso[2]/10.0, gamma, rho, col, dsource, mu_index2)
+        print('%.6f, %.6f, %.6f, %.2f, %.2f, %.2f, %.6f, %.6f' % \
+            (iso[0]/10.0, iso[1]/10.0, iso[2]/10.0, gamma, rho, col, dsource, mu_index2), file=dcmgantry)
     
         output_bush=dcm2dosxyz(gamma,rho,col,'Bush')
         output_thebaut=dcm2dosxyz(gamma,rho,col,'Thebaut')
-        print >>cpgantry_cmp, 'Zhan:    %.2f, %.2f, %.2f, %.6f' % \
-            (out[0], out[1], out[2], mu_index1)
-        print >>cpgantry_cmp, 'Thebaut: %.2f, %.2f, %.2f, %.6f' % \
-            (output_thebaut[0], output_thebaut[1], output_thebaut[2], mu_index1)
-        print >>cpgantry_cmp, 'Bush:    %.2f, %.2f, %.2f, %.6f' % \
-            (output_bush[0], output_bush[1], output_bush[2], mu_index1)
+        print('Zhan:    %.2f, %.2f, %.2f, %.6f' % \
+            (out[0], out[1], out[2], mu_index1), file=cpgantry_cmp)
+        print('Thebaut: %.2f, %.2f, %.2f, %.6f' % \
+            (output_thebaut[0], output_thebaut[1], output_thebaut[2], mu_index1), file=cpgantry_cmp)
+        print('Bush:    %.2f, %.2f, %.2f, %.6f' % \
+            (output_bush[0], output_bush[1], output_bush[2], mu_index1), file=cpgantry_cmp)
         
     for cp in beam.ControlPoints:
         mu_index = cp.CumulativeMetersetWeight*BeamWeight/beam.FinalCumulativeMetersetWeight + PreBeamWeight
@@ -263,20 +263,20 @@ for beam in dcmplan.Beams:
             out=dcm2dosxyz(gamma, rho, col, 'Zhan') # coord. transform
         
             # print the control points for gantry
-            print >>cpgantry, '%.6f, %.6f, %.6f, %.2f, %.2f, %.2f, %.6f, %.6f' % \
-                (iso[0]/10.0, iso[1]/10.0, iso[2]/10.0, out[0], out[1], out[2], dsource, mu_index)
+            print('%.6f, %.6f, %.6f, %.2f, %.2f, %.2f, %.6f, %.6f' % \
+                (iso[0]/10.0, iso[1]/10.0, iso[2]/10.0, out[0], out[1], out[2], dsource, mu_index), file=cpgantry)
             ncpgantry = ncpgantry + 1
-            print >>dcmgantry,'%.6f, %.6f, %.6f, %.2f, %.2f, %.2f, %.6f, %.6f' % \
-                (iso[0]/10.0, iso[1]/10.0, iso[2]/10.0, gamma, rho, col, dsource, mu_index)
+            print('%.6f, %.6f, %.6f, %.2f, %.2f, %.2f, %.6f, %.6f' % \
+                (iso[0]/10.0, iso[1]/10.0, iso[2]/10.0, gamma, rho, col, dsource, mu_index), file=dcmgantry)
         
             output_bush=dcm2dosxyz(gamma,rho,col,'Bush')
             output_thebaut=dcm2dosxyz(gamma,rho,col,'Thebaut')
-            print >>cpgantry_cmp, 'Bush:    %.2f, %.2f, %.2f, %.6f' % \
-                (out[0], out[1], out[2], mu_index1)
-            print >>cpgantry_cmp, 'Thebaut: %.2f, %.2f, %.2f, %.6f' % \
-                (output_thebaut[0], output_thebaut[1], output_thebaut[2], mu_index1)
-            print >>cpgantry_cmp, 'Zhan:    %.2f, %.2f, %.2f, %.6f' % \
-                (output_bush[0], output_bush[1], output_bush[2], mu_index1)
+            print('Bush:    %.2f, %.2f, %.2f, %.6f' % \
+                (out[0], out[1], out[2], mu_index1), file=cpgantry_cmp)
+            print('Thebaut: %.2f, %.2f, %.2f, %.6f' % \
+                (output_thebaut[0], output_thebaut[1], output_thebaut[2], mu_index1), file=cpgantry_cmp)
+            print('Zhan:    %.2f, %.2f, %.2f, %.6f' % \
+                (output_bush[0], output_bush[1], output_bush[2], mu_index1), file=cpgantry_cmp)
 
         # find mlcx
         try:
@@ -287,14 +287,14 @@ for beam in dcmplan.Beams:
             pass
     
         # now the mlc part
-        print >>cpmlc, '%.6f' % mu_index    
+        print('%.6f' % mu_index, file=cpmlc)    
         
-        print >>pdmlc, ''
-        print >>pdmlc, 'Field = 1-%d' % (cp.ControlPointIndex)
-        print >>pdmlc, 'Index = %.6f' % mu_index
-        print >>pdmlc, 'Carriage Group = 1'
-        print >>pdmlc, 'Operator ='
-        print >>pdmlc, 'Collimator = 0.0'
+        print('', file=pdmlc)
+        print('Field = 1-%d' % (cp.ControlPointIndex), file=pdmlc)
+        print('Index = %.6f' % mu_index, file=pdmlc)
+        print('Carriage Group = 1', file=pdmlc)
+        print('Operator =', file=pdmlc)
+        print('Collimator = 0.0', file=pdmlc)
         
         mlc_exist = False
         for device in CurrentBeamLimitingDevicePositions:
@@ -303,34 +303,34 @@ for beam in dcmplan.Beams:
                 leaves = device.LeafJawPositions
                 for n in range(len(leaves)/2):
                     m=60-n-1
-                    print >>cpmlc, '%.3f, %.3f, %d' % \
-                        (0.51*leaves[m]/10.0, 0.51*leaves[len(leaves)/2+m]/10.0, 1)
+                    print('%.3f, %.3f, %d' % \
+                        (0.51*leaves[m]/10.0, 0.51*leaves[len(leaves)/2+m]/10.0, 1), file=cpmlc)
                     
                 for n in range(len(leaves)/2):
-                    print >>pdmlc, 'Leaf %2dA = %.2f' % (n+1, leaves[n]/10.0)
+                    print('Leaf %2dA = %.2f' % (n+1, leaves[n]/10.0), file=pdmlc)
                 for n in range(len(leaves)/2):
                     m = len(leaves)/2+n
-                    print >>pdmlc, 'Leaf %2dB = %.2f' % (n+1, leaves[m]/10.0)
+                    print('Leaf %2dB = %.2f' % (n+1, leaves[m]/10.0), file=pdmlc)
         if not mlc_exist: # Case of 'MLCY' not checked. Possibly needed later.
             for n in range(60): 
-                print >>cpmlc, '%.3f, %.3f, %d' % (-20, 20, 1)
+                print('%.3f, %.3f, %d' % (-20, 20, 1), file=cpmlc)
             for n in range(60):
-                print >>pdmlc, 'Leaf %2dA = %.2f' % (n+1, -20)
+                print('Leaf %2dA = %.2f' % (n+1, -20), file=pdmlc)
             for n in range(60):
-                print >>pdmlc, 'Leaf %2dB = %.2f' % (n+1, 20)
+                print('Leaf %2dB = %.2f' % (n+1, 20), file=pdmlc)
         
-        print >>pdmlc, 'Note = 0'
-        print >>pdmlc, 'Shape = 0'
-        print >>pdmlc, 'Magnification = 1.00'        
+        print('Note = 0', file=pdmlc)
+        print('Shape = 0', file=pdmlc)
+        print('Magnification = 1.00', file=pdmlc)        
                 
     PreBeamWeight = PreBeamWeight + BeamWeight
     
-    print >>pdmlc, ''
-    print >>pdmlc, 'CRC = 43B6'
+    print('', file=pdmlc)
+    print('CRC = 43B6', file=pdmlc)
 
-print 'Jaw Max Opening: ', JawOpenMax
+print('Jaw Max Opening: ', JawOpenMax)
 if JawOpenMax > 15:
-    print 'WARNING: Jaw Opening is BIGGER than maximun allowance from DBS setting !!'
+    print('WARNING: Jaw Opening is BIGGER than maximun allowance from DBS setting !!')
     
 cpgantry.close()
 dcmgantry.close()

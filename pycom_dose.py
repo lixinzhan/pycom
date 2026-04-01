@@ -68,7 +68,7 @@
 import os
 import argparse
 import struct
-import StringIO as sio
+import io as sio
 import numpy as np
 import dicom
 from pycomuid import get_dicomuid
@@ -113,17 +113,17 @@ else:
     outfile = os.path.dirname(os.path.abspath(dcmdosefile)) + \
         '/mc_'+os.path.basename(dcmdosefile)
 
-print
-print '#################################'
-print 'BEAMnrc Dir:       ' + os.path.normpath(beamdir)
-print 'DOSXYZnrc Dir:     ' + os.path.normpath(dosxyzdir)
-print 'DCM RP Input:      ' + os.path.normpath(dcmplanfile)
-print 'DCM RD Template:   ' + os.path.normpath(dcmdosefile)
-print 'MC 3ddose file:    ' + os.path.normpath(mcdosefile)
-print 'New DCM RD output: ' + os.path.normpath(outfile)
-print
-print '#################################'
-print
+print()
+print('#################################')
+print('BEAMnrc Dir:       ' + os.path.normpath(beamdir))
+print('DOSXYZnrc Dir:     ' + os.path.normpath(dosxyzdir))
+print('DCM RP Input:      ' + os.path.normpath(dcmplanfile))
+print('DCM RD Template:   ' + os.path.normpath(dcmdosefile))
+print('MC 3ddose file:    ' + os.path.normpath(mcdosefile))
+print('New DCM RD output: ' + os.path.normpath(outfile))
+print()
+print('#################################')
+print()
 
 ################################################################################
 # This part is to be change by user for corresponding absolute dose calibration.
@@ -135,9 +135,9 @@ D_cal_abs = 0.01       # 1 cGy/MU = 0.01 Gy/MU
 # Ion chamber absolute dose (in Gy) per MU. D_ch_MU are obtained from numbers above.
 D_ch_MU = D_cal_abs * d_cal_ch/d_depcal
 
-print 'MC Chamber Dose:    ', d_ch
-print 'Calibration Factor: ', D_ch_MU
-print
+print('MC Chamber Dose:    ', d_ch)
+print('Calibration Factor: ', D_ch_MU)
+print()
 ###### Info from DICOM RP file
 dcmplan = dicom.read_file(dcmplanfile)
 RefBeam = {}
@@ -148,12 +148,12 @@ for rbeam in dcmplan.FractionGroups[0].ReferencedBeams:
         RefBeam[rbeam.ReferencedBeamNumber] = rbeam.BeamMeterset
         MUtot = MUtot + rbeam.BeamMeterset
         #DoseTot = DoseTot + rbeam.BeamDose
-print 'MU for each beam: ', RefBeam
-print 'Total MU: ', MUtot
+print('MU for each beam: ', RefBeam)
+print('Total MU: ', MUtot)
 #print 'Total Dose', DoseTot
 nFrac = dcmplan.FractionGroups[0].NumberofFractionsPlanned
-print 'nFrac = ', nFrac
-print
+print('nFrac = ', nFrac)
+print()
 
 # Info from the model DICOM RT Dose file
 dcmdose = dicom.read_file(dcmdosefile)
@@ -168,12 +168,12 @@ elif DoseSumType=='PLAN':
     MU = MUtot
 elif DoseSumType=='BEAM':
     MU = MUtot
-    print 'BEAM ONLY !!!'
+    print('BEAM ONLY !!!')
 else:
-    print 'DoseSumType ',DoseSumType, ' not supported.'
-print
-print 'DoseSumType: ', DoseSumType, ' MUtot: ', MUtot, ' Fracions: ',nFrac, 'MU used for Generating DICOM RD: ', MU
-print
+    print('DoseSumType ',DoseSumType, ' not supported.')
+print()
+print('DoseSumType: ', DoseSumType, ' MUtot: ', MUtot, ' Fracions: ',nFrac, 'MU used for Generating DICOM RD: ', MU)
+print()
 
 dosescaling = dcmdose.DoseGridScaling
 
@@ -184,18 +184,18 @@ if BitsAllocated==32:
 elif BitsAllocated==16:
     format = 'H'*length
 else:
-    print 'BitsAllocated: ', BitsAllocated, ' is not supported yet.'
+    print('BitsAllocated: ', BitsAllocated, ' is not supported yet.')
 pdata = struct.unpack(format, dcmdose.PixelData)
 pdmax = max(pdata)
 
-print '#################################'
-print 'ImagePos:', dcmdose.ImagePositionPatient
-print 'xsizeold:',xsizeold, 'ysizeold:',ysizeold, 'zsizeold:',zsizeold
-print 'DoseGridScaling', dosescaling 
-print 'MaxDose(INT):',pdmax, 'MaxDose(Gy):',pdmax*dosescaling, '<--'
-print 'TotLength:',length, 'Bits:',length*dcmdose.BitsAllocated/8
-print 'OffsetVector Length:', np.size(dcmdose.GridFrameOffsetVector)
-print '-----------------------------'
+print('#################################')
+print('ImagePos:', dcmdose.ImagePositionPatient)
+print('xsizeold:',xsizeold, 'ysizeold:',ysizeold, 'zsizeold:',zsizeold)
+print('DoseGridScaling', dosescaling) 
+print('MaxDose(INT):',pdmax, 'MaxDose(Gy):',pdmax*dosescaling, '<--')
+print('TotLength:',length, 'Bits:',length*dcmdose.BitsAllocated/8)
+print('OffsetVector Length:', np.size(dcmdose.GridFrameOffsetVector))
+print('-----------------------------')
 
 
 # Info from the DOSXYZnrc 3ddose file
@@ -232,24 +232,24 @@ if BitsAllocated==32:
 elif BitsAllocated==16:
     format = 'H'*length
 else:
-    print 'BitsAllocated: ', BitsAllocated, ' is not supported yet.'
+    print('BitsAllocated: ', BitsAllocated, ' is not supported yet.')
 
 # di = np.array(d*pdmax/d.max(),np.int)
 # di = np.array(0.01*(d/d_cal5cm)*MU*nFrac/dosescaling,np.int)
 di = np.array((d/d_ch)*nFrac*MU*D_ch_MU/dosescaling,np.int)
 dcmdose.PixelData = struct.pack(format,*(di.tolist()))
 
-print 'check dose volume sizes'
-print 'Pixel Range:', x[0],x[-1],y[0],y[-1],z[0],z[-1]
-print 'dx, dy, dz:', dx, dy, dz
-print 'ImageOrigien:',dcmdose.ImagePositionPatient
-print 'sizes:',xsize, ysize, zsize, np.size(x),np.size(y),np.size(z)
-print 'Max D/Ne:',d.max(), 'Abs Dmax:',d.max()*MU*nFrac*D_ch_MU/d_ch, '<--'
-print 'PixelSpacing:',dcmdose.PixelSpacing, 'MaxDose:',di.max()
-print length, np.size(d), np.size(e)
-print 'New Image Position:', dcmdose.ImagePositionPatient
-print 'OffsetVector Length:', np.size(dcmdose.GridFrameOffsetVector)
-print 
+print('check dose volume sizes')
+print('Pixel Range:', x[0],x[-1],y[0],y[-1],z[0],z[-1])
+print('dx, dy, dz:', dx, dy, dz)
+print('ImageOrigien:',dcmdose.ImagePositionPatient)
+print('sizes:',xsize, ysize, zsize, np.size(x),np.size(y),np.size(z))
+print('Max D/Ne:',d.max(), 'Abs Dmax:',d.max()*MU*nFrac*D_ch_MU/d_ch, '<--')
+print('PixelSpacing:',dcmdose.PixelSpacing, 'MaxDose:',di.max())
+print(length, np.size(d), np.size(e))
+print('New Image Position:', dcmdose.ImagePositionPatient)
+print('OffsetVector Length:', np.size(dcmdose.GridFrameOffsetVector))
+print() 
 
 dcmdose.SOPInstanceUID = get_dicomuid()
 dcmdose.StudyUID = get_dicomuid()
@@ -261,6 +261,6 @@ dcmdose.StudyInstanceUID = get_dicomuid()
 dcmdose.SeriesInstanceUID = get_dicomuid()
         
 dicom.write_file(outfile, dcmdose)
-print 'New DCM RD file created: ',outfile
+print('New DCM RD file created: ',outfile)
 
 #print xsize, ysize, zsize, length, length*dcmdose.BitsAllocated/8, max(di)
