@@ -15,13 +15,16 @@ by a DICOM processing software.
 
 See comments in the files for the usage of the tools.
 
-_Note: The current version was developed based on BEAMnrc version 2011_
+_**Note:**_
+* _The current version was developed based on BEAMnrc version 2011_
+* _Development under Python3 is in progress. Matching BEAMnrc version will be updated too._
 
 ---
 
-This version was developed under Python2. Here are the steps for setting up a Python2 environment to run this package:
+This version is **under development** based on Python3. **Not finalized yet and for testing only**. 
+Here are the steps for setting up a Python3 environment to run this package:
 
-1. Install a latest Linux OS with Python2.7 included, such as Ubuntu 22.04 or RHEL7/8. We use Ubuntu 22.04 as the example here.
+1. Install a latest Linux OS Ubuntu 24.04/26.04 or RHEL9/10. We use Ubuntu as the example base OS here.
 
 2. Set up GIT
 
@@ -35,28 +38,14 @@ gh repo clone https://github.com/lixinzhan/pycom.git
 2. Run commands below to set up the Python2.7 virtual environment
 
 ```
-sudo apt install python2
-sudo apt install python2-pip
-sudo pip2 install virtualenv
-virtualenv pycom/venv2
+sudo apt install python3
+sudo apt install python3-venv
+pytho3 -m venv pycom/venv3
 ```
 
 3. Set up the PYCOM running environment
 
 ```
-cd pycom
-source rc.py2env
-pip2 install -r requirements.txt
-```
-
----
-
-Here are the steps to set up a Python3 environment.
-
-```
-sudo apt install python3
-sudo apt install python3-venv
-pytho3 -m venv pycom/venv3
 cd pycom
 source rc.py3env
 pip install --upgrade pip
