@@ -37,7 +37,8 @@ parser.add_argument('-id', '--anon_id', help='Anonymous ID used for replacing th
 args=parser.parse_args()
 
 f = open(os.path.normpath(args.dcmlist))
-dcm_list = f.readlines()
+dcm_list = [line.strip() for line in f.readlines()]
+f.close()
 
 if args.anon_name:
     anon_name = args.anon_name
@@ -50,23 +51,25 @@ else:
 
 FOR_uid = get_dicomuid()
 
-for dcmfile in dcm_list:    
-    dcmfilename = dcmfile.strip()
-    dcm = pydicom.read_file(dcmfilename)
+for dcmfile in dcm_list:
+    try:
+        dcm = pydicom.read_file(dcmfile)
+        dcm.FrameOfReferenceUID = FOR_uid
+        dcm.PatientsName = anon_name
+        dcm.PatientID = anon_id
+        dcm.PatientsSex = 'O'
+        dcm.SOPInstanceUID = get_dicomuid()
+        dcm.StudyUID = get_dicomuid()
+        dcm.SeriesUID = get_dicomuid()
+        dcm.FrameUID = get_dicomuid()
+        dcm.SyncUID = get_dicomuid()
+        dcm.SrUID = get_dicomuid()
+        dcm.StudyInstanceUID = get_dicomuid()
+        dcm.SeriesInstanceUID = get_dicomuid()
 
-    dcm.FrameOfReferenceUID = FOR_uid        
-    dcm.PatientsName = anon_name
-    dcm.PatientID = anon_id
-    dcm.PatientsSex = 'O'
-    dcm.SOPInstanceUID = get_dicomuid()
-    dcm.StudyUID = get_dicomuid()
-    dcm.SeriesUID = get_dicomuid()
-    dcm.FrameUID = get_dicomuid()
-    dcm.SyncUID = get_dicomuid()
-    dcm.SrUID = get_dicomuid()
-    dcm.StudyInstanceUID = get_dicomuid()
-    dcm.SeriesInstanceUID = get_dicomuid()
-    
-    outfile = 'anon_'+dcmfilename
-    pydicom.write_file(outfile, dcm)
+        outfile = 'anon_' + dcmfile
+        pydicom.write_file(outfile, dcm)
+        print(f"Processed: {dcmfile} -> {outfile}")
+    except Exception as e:
+        print(f"Error processing {dcmfile}: {e}")
 
