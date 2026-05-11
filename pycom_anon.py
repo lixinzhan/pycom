@@ -17,6 +17,8 @@
 #   -id ANON_ID, --anon_id ANON_ID
 #                         Anonymous ID used for replacing the original patient
 #                         ID. Default: 00000000
+#   --output-dir OUTPUT_DIR
+#                         Directory for output files. Default: current directory
 # 
 # Example:
 # python pycom_anon.py -i dcmlist -n TEST -id 0001
@@ -25,31 +27,29 @@
 # Developed by Lixin Zhan (lixinzhan AT gmail DOT com). #
 #########################################################
 
-import os
+from pathlib import Path
 import argparse
 import pydicom
-from pycomuid import get_dicomuid
+import pydicom.uid
 
 parser = argparse.ArgumentParser(description='Anonymizing DICOM files')
 parser.add_argument('-i', '-l', '--dcmlist', help='List of DICOM files to be anonymized', required=True)
-parser.add_argument('-n', '--anon_name', help='Anonymous name used for replacing the original patient name. Default: anon')
-parser.add_argument('-id', '--anon_id', help='Anonymous ID used for replacing the original patient ID. Default: 00000000')
+parser.add_argument('-n', '--anon_name', default='anon', help='Anonymous name to be used. Default: anon')
+parser.add_argument('-id', '--anon_id', default='00000000', help='Anonymous ID to be used. Default: 00000000')
+parser.add_argument('--output-dir', default='.', help='Directory for output files. Default: current directory')
 args=parser.parse_args()
 
-f = open(os.path.normpath(args.dcmlist))
-dcm_list = [line.strip() for line in f.readlines()]
-f.close()
+dcmlist_path = Path(args.dcmlist).resolve()
+with open(dcmlist_path, 'r') as f:
+    dcm_list = [line.strip() for line in f.readlines()]
 
-if args.anon_name:
-    anon_name = args.anon_name
-else:
-    anon_name = 'anon'
-if args.anon_id:
-    anon_id = args.anon_id
-else:
-    anon_id = '00000000'
+output_dir = Path(args.output_dir)
+output_dir.mkdir(exist_ok=True)
 
-FOR_uid = get_dicomuid()
+anon_name = args.anon_name
+anon_id = args.anon_id
+
+FOR_uid = pydicom.uid.generate_uid()
 
 for dcmfile in dcm_list:
     try:
@@ -58,18 +58,20 @@ for dcmfile in dcm_list:
         dcm.PatientsName = anon_name
         dcm.PatientID = anon_id
         dcm.PatientsSex = 'O'
-        dcm.SOPInstanceUID = get_dicomuid()
-        dcm.StudyUID = get_dicomuid()
-        dcm.SeriesUID = get_dicomuid()
-        dcm.FrameUID = get_dicomuid()
-        dcm.SyncUID = get_dicomuid()
-        dcm.SrUID = get_dicomuid()
-        dcm.StudyInstanceUID = get_dicomuid()
-        dcm.SeriesInstanceUID = get_dicomuid()
+        dcm.SOPInstanceUID = pydicom.uid.generate_uid()
+        dcm.FrameUID = pydicom.uid.generate_uid()
+        dcm.SyncUID = pydicom.uid.generate_uid()
+        dcm.SrUID = pydicom.uid.generate_uid()
+        dcm.StudyInstanceUID = pydicom.uid.generate_uid()
+        dcm.SeriesInstanceUID = pydicom.uid.generate_uid()
 
-        outfile = 'anon_' + dcmfile
+        outfile = output_dir / f"anon_{Path(dcmfile).name}"
         pydicom.write_file(outfile, dcm)
         print(f"Processed: {dcmfile} -> {outfile}")
     except Exception as e:
         print(f"Error processing {dcmfile}: {e}")
 
+
+# Note: 
+# 1. StudyUID and SeriesUID removed from the for loop. To be double checked later.
+# 2. Using pycom.uid.generate_uid() now, which replaced the original pycomuid.py code.
